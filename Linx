@@ -1,0 +1,55 @@
+*** Settings ***
+Library     SeleniumLibrary
+
+
+*** Variables ***
+${url}                          https://linx.com.br
+${menuInstitucional}            (//a[contains(@data-menu-link,'institutional')])[1]
+${submenuMatrizeFiliais}        (//a[@href='/matriz-e-filiais/'][contains(.,'Matriz e filiais')])[1]
+${submenuCarreiraLinx}          (//a[@href='/carreira-linx/'][contains(.,'Carreira Linx')])[1]
+${filialCascavelPR}             Cascavel/PR
+${filialAparecidadeGoianiaGO}   Aparecida de Goiania/GO
+${linkHomePage}                 (//a[@class='o-header_link'])[1]
+${CarreiraTecnologiaeProduto}   (//option[@value='Linx - Tecnologia e Produto'][contains(.,'Linx - Tecnologia e Produto')])[1]
+${segmentoLinuxSuporte}         (//p[@class='a-title o-work-with-us_subtitle'][contains(.,'Linx - Suporte')])[1]
+${segmentoTecnologiaeProduto}   Linx - Tecnologia e Produto
+
+*** Keywords ***
+
+Abrir o navegador 
+    Open Browser    browser=chrome
+    Maximize Browser Window
+
+Fechar o navegador 
+    Capture Page Screenshot
+
+Dado que o usuário esteja na página home page da Linx.com.br
+    Go To   url=${url}
+
+Quando ele clicar no menu "Institucional"
+    Click Element   locator=${menuInstitucional} 
+
+E Quando ele clicar no submenu "Matriz e Filiais"
+    Click Element   locator=${submenuMatrizeFiliais}
+
+Então verificar se a filial Cascavel/PR existe
+    Wait until page Contains    text=${filialCascavelPR}
+
+E Então verificar se a filial Aparecida de Goiania/GO NÃO existe
+    Wait Until Page Does Not Contain      text=${filialAparecidadeGoianiaGO}
+
+Quando ele retornar a página home page da Linx.com.br
+    Click Element   locator=${linkHomePage}
+
+E Quando ele clicar no submenu "Carreira Linx"
+    Click Element   locator=${submenuCarreiraLinx}
+
+Então filtrar pelo segmento "Linx - Tecnologia e Produto"
+    # Click Element   locator=${listaCarreirasLinx}
+    Click Element   locator=${CarreiraTecnologiaeProduto}
+
+E Então verificar se o segmento "Linx - Suporte" NÃO existe
+    Wait Until Page Does Not Contain Element    locator=${segmentoLinuxSuporte}
+
+E Então verificar se filtrou o segmento selecionado
+    Wait until page Contains    text=${segmentoTecnologiaeProduto}
